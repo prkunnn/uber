@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}已上架的菜單{% endblock %}
+
+{% block content %}
+<h1>已上架的菜單項目</h1>
+<ul>
+    {% for item in menu_items %}
+        <li>
+            名稱: {{ item.name }}<br>
+            價格: {{ item.price }}<br>
+            描述: {{ item.description }}<br>
+            狀態: {{ item.availability_status }}<br>
+            <form id="delete-form-{{ item.id }}" action="/menu" method="GET" style="display:inline;">
+                <input type="hidden" name="delete_id" value="{{ item.id }}">
+                <button type="submit" onclick="return confirm('確定要刪除這個菜單項目嗎？')">刪除</button>
+            </form>
+        </li>
+        <hr>
+    {% endfor %}
+</ul>
+<a href="/add_menu">新增菜單</a>
+{% endblock %}

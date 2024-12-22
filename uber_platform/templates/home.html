@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}主頁{% endblock %}
+
+{% block content %}
+<h1>歡迎, {{ session['merchant_name'] }}</h1>
+<p>請選擇您需要的操作：</p>
+
+<div>
+    <a href="/add_menu">新增菜單</a>
+</div>
+<div>
+    <a href="/view_menu">查看已上架的菜單</a>
+</div>
+<div>
+    <a href="/orders">訂單管理</a>
+</div>s
+{% endblock %}
