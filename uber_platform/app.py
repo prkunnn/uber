@@ -62,9 +62,30 @@ def login():
             session['merchant_name'] = merchant['name']
             return redirect(url_for('view_orders'))
         return jsonify({'error': 'Invalid email or password'})
-    return render_template('login.html')
+    return render_template('login.html', merchant_login=True)
 
-# Route: Logout
+# Route: Delivery Login
+@app.route('/deliveryLogin', methods=['GET', 'POST'])
+def deliveryLogin():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM delivery_driver WHERE email = %s", (email,))
+        driver = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if driver and check_password_hash(driver['password'], password):
+            session['driver_id'] = driver['id']
+            session['driver_name'] = driver['name']
+            return redirect(url_for('driverHome'))
+        return jsonify({'error': 'Invalid email or password'})
+    return render_template('login.html', merchant_login=False)
+
+# Route: Merchant Logout
 @app.route('/logout')
 def logout():
     session.clear()
@@ -168,57 +189,11 @@ def update_order_status():
 # Route: Home Page
 @app.route('/', methods=['GET'])
 def home():
-    if 'merchant_id' not in session:
-        return redirect(url_for('login'))  # 如果未登入，重定向到登入頁面
     return render_template('home.html')  # 渲染主頁模板
 
-@app.route('/menu', methods=['GET', 'POST'])
-def manage_menu():
-    if 'merchant_id' not in session:
-        return redirect(url_for('login'))
-
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-
-    # 處理刪除請求
-    if request.method == 'GET' and 'delete_id' in request.args:
-        delete_id = request.args.get('delete_id')
-        merchant_id = session['merchant_id']
-
-        # 刪除符合條件的菜單項目
-        cursor.execute("DELETE FROM menuitem WHERE id = %s AND merchant_id = %s", (delete_id, merchant_id))
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return redirect(url_for('manage_menu'))  # 刪除後重定向回菜單頁面
-
-    # 處理新增或更新菜單項目
-    if request.method == 'POST':
-        name = request.form['name']
-        price = request.form['price']
-        description = request.form['description']
-        availability_status = request.form['availability_status']
-        merchant_id = session['merchant_id']
-
-        # 插入或更新菜單項目
-        cursor.execute("""
-            INSERT INTO menuitem (name, price, description, availability_status, merchant_id)
-            VALUES (%s, %s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE
-            price = VALUES(price),
-            description = VALUES(description),
-            availability_status = VALUES(availability_status)
-        """, (name, price, description, availability_status, merchant_id))
-        conn.commit()
-
-    # 顯示所有菜單項目
-    cursor.execute("SELECT * FROM menuitem WHERE merchant_id = %s", (session['merchant_id'],))
-    menu_items = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
-    return render_template('view_menu.html', menu_items=menu_items)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
+# Route: Delivery Driver Home
+@app.route('/driverHome', methods=['GET'])
+def driverHome():
+    if 'driver_id' not in session:
+        return redirect(url_for('deliveryLogin'))
+    return render_template('driverHome.html')
