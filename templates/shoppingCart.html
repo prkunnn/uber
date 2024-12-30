@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>購物車</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .cart-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .cart-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .cart-table th, .cart-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .cart-table th {
+            background-color: #f0f0f0;
+        }
+        .total {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .delivery-time {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+        .confirm-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .confirm-button button {
+            font-size: 24px; /* 增加字体大小 */
+            padding: 10px 80px; /* 增加内边距 */
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-container">
+        <div class="cart-header">
+            <h1>購物車</h1>
+        </div>
+        <!-- <div class="delivery-time">
+            預計送餐時間：約30分鐘
+        </div> -->
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>餐點</th>
+                    <th>價格</th>
+                    <th>數量</th>
+                    <th>小計</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>${{ item.price }}</td>
+                    <td>{{ item.amount }}</td>
+                    <td>${{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+                <!-- 可以加入更多餐點 -->
+            </tbody>
+        </table>
+        <div class="total">
+            總金額: ${{ items|sum(attribute='total_price') }}
+            <!-- 總計：$1450 -->
+        </div>
+        <div class="confirm-button">
+            <form action="/confirm_order" method="POST">
+                {% for item in items %}
+                    <input type="hidden" value="{{ item.amount }}" name="amount_{{ item.dish_id }}">
+                    <input type="hidden" value="{{ item.dish_id }}" name="dish_id_{{ item.dish_id }}">
+                    <input type="hidden" value="{{ item.total_price }}" name="sum_price_{{ item.dish_id }}">
+                {% endfor %}
+                <input type="hidden" value="{{ items|sum(attribute='total_price') }}" name="total_price">
+                <input type="hidden" value="{{ m_id }}" name="m_id">
+                <button class="btn btn-primary font-weight-bold py-3 px-5" type="submit">確認訂單</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

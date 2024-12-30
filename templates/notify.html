@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notify Pickup</title>
+</head>
+<body>
+    <h1>通知外送員取餐</h1>
+    <form action="/notify_pickup" method="POST">
+        <label for="order_id">訂單ID：</label>
+        <input type="number" name="order_id" id="order_id" required><br><br>
+        <button type="submit">發送通知</button>
+    </form>
+</body>
+</html>

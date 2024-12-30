@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}新增菜單{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>新增菜單</h1>
+
+    <form action="/add_menu" method="POST">
+        <!-- 菜品名稱區域 -->
+        <div class="form-section">
+            <label for="name">菜品名稱：</label>
+            <input type="text" name="name" id="name" placeholder="輸入菜品名稱" required>
+        </div>
+
+        <!-- 價格區域 -->
+        <div class="form-section">
+            <label for="price">價格：</label>
+            <input type="number" step="1" name="price" id="price" placeholder="輸入價格" required>
+        </div>
+
+        <!-- 描述區域 -->
+        <div class="form-section">
+            <label for="description">描述：</label>
+            <textarea name="description" id="description" rows="3" placeholder="輸入菜品描述"></textarea>
+        </div>
+
+        <!-- 狀態區域 -->
+        <div class="form-section">
+            <label for="availability_status">狀態：</label>
+            <select name="availability_status" id="availability_status">
+                <option value="Available">上架</option>
+                <option value="Unavailable">下架</option>
+            </select>
+        </div>
+
+        <!-- 提交按鈕 -->
+        <button type="submit">提交</button>
+    </form>
+</div>
+{% endblock %}

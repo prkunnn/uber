@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Eatery Colorlib Website Template</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+
+    <link rel="stylesheet" href="fonts/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="fonts/flaticons/font/flaticon.css">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Theme Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/style.min.css" rel="stylesheet">
+
+    <style> 
+    .hidden { display: none; } 
+    .counter { font-size: 24px; margin-top: 20px; width: 50px; text-align: center;} 
+    button { padding: 10px 20px; font-size: 22px; margin: 5px; } </style>
+  </head>
+  <body>
+    
+    <!-- Start header-->
+    <header role="banner">
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="index.html">Eatery</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarsExample05">
+            <ul class="navbar-nav ml-auto pl-lg-5 pl-0">
+              <li class="nav-item">
+                <a class="nav-link" href="/main_index">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/restaurants">Restaraunts</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/restaurants">Orders</a>
+              </li>
+              <!-- <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="services.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Services</a>
+                <div class="dropdown-menu" aria-labelledby="dropdown04">
+                  <a class="dropdown-item" href="services.html">Catering</a>
+                  <a class="dropdown-item" href="services.html">Birthday Party</a>
+                  <a class="dropdown-item" href="services.html">Wedding Party</a>
+                </div>
+              </li> -->
+              <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="/news">News</a>
+              </li>
+            </ul>
+
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item cta-btn">
+                <a class="nav-link" href="contact.html">Contact Us</a>
+              </li>
+            </ul>
+            
+          </div>
+        </div>
+      </nav>
+    </header>
+    <!-- END header -->
+    
+    <!-- Start Title-->
+    <section class="home-slider-loop-false  inner-page owl-carousel">
+      {% for item in merchant %}
+      <div class="slider-item" style="background-image: url('img/hero_1.jpg');">
+        
+        <div class="container">
+          <div class="row slider-text align-items-center justify-content-center">
+            <div class="col-md-8 text-center col-sm-12 element-animate">
+              <h1>{{item.name}}</h1>
+      {% endfor %}
+              <p class="mb-5">Our Dishes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- End Title-->
+
+    <!-- Start Menu -->
+    <section class="section element-animate">
+      <div class="container">
+        <form action="/entershoppingCart" method="POST">
+        <div class="row">
+          {% for item in menu_items %}
+          <div class="col-md-6 mb-4">
+            <div class="blog d-block d-lg-flex">
+              <div class="bg-image" style="background-image: url('img/{{item.imgfile}}');"></div>
+              <div class="text">
+                <h3>{{ item.name }}</h3>
+                <p ><span>${{item.price}}</span>
+                  <!-- <span><span class="fa fa-calendar"></span> {{ item.date }}</span> <br> -->
+                </p>
+                <p>{{ item.description }}</p>
+                <!-- <p class="btn btn-primary btn-sm">Add to Cart</a></p> -->
+                <div class="nav-item dropdown">
+                  <!-- <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">+ Add to Cart</a> -->
+                  <div class="dropdown-menu text-capitalize">
+                    <!-- <a href="#" class="dropdown-item">1</a>
+                    <a href="#" class="dropdown-item">2</a> -->
+                      <!-- <a href="reservation.html" class="dropdown-item">1</a>
+                      <a href="\feedback" class="dropdown-item active">2</a> -->
+                  </div>
+                  <button class="btn btn-primary btn-sm" type="button" onclick="updateCounterN('counter{{ item.id}}', 1)">+1</button>
+                  <button class="btn btn-primary btn-sm" type="button" onclick="updateCounterN('counter{{ item.id }}', -1)">-1</button>
+                  <input id="counter{{ item.id }}" class="counter" type="text" value="0" name="amount_{{ item.id }}" readonly>
+                  <input type="hidden" value="{{ item.id }}" name="dish_id_{{ item.id }}">
+                  <input type="hidden" value="{{ item.name }}" name="name_id_{{ item.id }}">
+                  <input type="hidden" value="{{ item.price }}" name="price_id_{{ item.id }}">
+                  <input type="hidden" value="{{ item.imgfile }}" name="merchant_id_{{ item.id }}">
+                  <!-- <button class="btn btn-primary btn-sm" onclick="increment('counter{{ loop.index }}')">+1</button>
+                  <button class="btn btn-primary btn-sm" onclick="decrement('counter{{ loop.index }}')">-1</button> -->
+                  <!-- <div id="counter{{ loop.index }}" class="hidden">0</div> -->
+                  <!-- <input type="" value="counter{{ loop.index }}, " name="m_id"> -->
+              </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% for item in merchant %}
+          <input type="hidden" value="{{ item.id }}" name="merchant_id">
+          {% endfor %}
+          <div>
+            <button class="hidden"></button>
+            <button class="hidden" onclick="sendData()">Send Data</button>
+            <button class="btn btn-primary font-weight-bold py-3 px-5" type="submit" id="sendMessageButton">加入購物車</button>
+        </div>
+        </form>
+        </div>
+      </div>
+    </section>
+    <!-- End Menu -->
+    
+    <!-- Show Feedback Start -->
+    <section class="section bg-light element-animate">
+    <div class="container-fluid py-5">
+      <div class="container">
+          <div class="section-title">
+              <h4 class="text-primary text-uppercase" style="letter-spacing: 5px;">Feedback</h4>
+              <h1 class="display-4">Our Clients Say</h1>
+          </div>
+
+            <div class="owl-carousel centernonloop">
+              {% for item in feedbacks %}
+              <div class="d-flex align-items-center mb-3">
+                <img class="img-fluid" src="img/feedback_default.png" alt="" style="width: 100px; height: 100px;">
+                <div class="ml-3">
+                    <h4>{{item.cName}}</h4>
+                    <i>{{item.created_at}}</i><br>
+                    <i>{{item.rating}} stars</i>
+                    <p class="m-0">{{item.feedback_text}}</p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+      </div>
+  </div>
+    </section>
+  <!-- Show Feedback End -->
+
+    <!-- Leave Feedback Start -->
+    <div class="container-fluid pt-5">
+          <div class="container">
+              <div class="section-title">
+                  <h4 class="text-primary text-uppercase" style="letter-spacing: 5px;">Leave Comment</h4>
+                  <h1 class="display-4">Give us your Feedback</h1>
+              </div>
+
+              <div class="row">
+                  <div class="col-md-6 pb-5">
+                  </div class = "contact-form"></div>
+                      <div class="contact-form">
+                          <div id="success"></div>
+                          <form action="/feedback" method="POST" >
+                              <!-- <div class="control-group">
+                                  <input type="text" class="form-control bg-transparent p-4" id="name" placeholder="Your Name"
+                                      required="required" data-validation-required-message="Please enter your name" />
+                                  <p class="help-block text-danger"></p>
+                              </div>
+                              <div class="control-group">
+                                  <input type="text" class="form-control bg-transparent p-4" id="subject" placeholder="Subject"
+                                      required="required" data-validation-required-message="Please enter a subject" />
+                                  <p class="help-block text-danger"></p>
+                              </div> -->
+                              <div class="form-section">
+                                  <textarea name="feedback" id="feedback" rows="5" placeholder="Message" class="form-control bg-transparent py-3 px-4" required="required" data-validation-required-message="Please enter your message"></textarea>
+                                  <p class="help-block text-danger"></p>
+                              </div>
+                              {% for item in merchant %}
+                                <input type="hidden" value="{{item.id}}" name="m_id">
+                              {% endfor %}
+                              <div>
+                                  <button class="btn btn-primary font-weight-bold py-3 px-5" type="submit" id="sendMessageButton">Send Feedback</button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+    </div>
+    <!-- Leave Feedback End -->
+
+    <!-- Start footer -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md-4 mb-5">
+            <h3>About Us</h3>
+            <p class="mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatibus et dolor blanditiis consequuntur ex voluptates perspiciatis omnis unde minima expedita.</p>
+            <ul class="list-unstyled footer-link d-flex footer-social">
+              <li><a href="#" class="p-2"><span class="fa fa-twitter"></span></a></li>
+              <li><a href="#" class="p-2"><span class="fa fa-facebook"></span></a></li>
+              <li><a href="#" class="p-2"><span class="fa fa-linkedin"></span></a></li>
+              <li><a href="#" class="p-2"><span class="fa fa-instagram"></span></a></li>
+            </ul>
+
+          </div>
+          <div class="col-md-5 mb-5">
+            <div class="mb-5">
+              <h3>Opening Hours</h3>
+              <p><strong class="d-block">Sunday-Thursday</strong> 5AM - 10PM</p>
+            </div>
+            <div>
+              <h3>Contact Info</h3>
+              <ul class="list-unstyled footer-link">
+                <li class="d-block">
+                  <span class="d-block">Address:</span>
+                  <span class="text-white">34 Street Name, City Name Here, United States</span></li>
+                <li class="d-block"><span class="d-block">Telephone:</span><span class="text-white">+1 242 4942 290</span></li>
+                <li class="d-block"><span class="d-block">Email:</span><span class="text-white">info@yourdomain.com</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-3 mb-5">
+            <h3>Quick Links</h3>
+            <ul class="list-unstyled footer-link">
+              <li><a href="#">About</a></li>
+              <li><a href="#">Terms of Use</a></li>
+              <li><a href="#">Disclaimers</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+          
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 text-md-center text-left">
+            <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+        Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" >Colorlib</a>
+        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- END footer -->
+
+    <!-- loader -->
+    <div id="loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#cf1d16"/></svg></div>
+
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/jquery.waypoints.min.js"></script>
+
+    <script src="js/jquery.magnific-popup.min.js"></script>
+    <script src="js/magnific-popup-options.js"></script>
+    
+
+    <script src="js/main.js"></script>
+    <script>
+      function updateCounterN(counterId, increment) {
+        var counter = document.getElementById(counterId);
+        var currentValue = parseInt(counter.value);
+        var newValue = currentValue + increment;
+        if (newValue < 0) newValue = 0;
+        if (newValue > 20) newValue = 20;
+        counter.value = newValue;
+      }
+      </script>
+    <script>
+      // let count = 0;
+      let modifiedCounters = {};
+      function updateCounter(counterId) { 
+        const counter = document.getElementById(counterId);
+        if (parseInt(counter.textContent) === 0) { 
+          counter.classList.add('hidden');
+          delete modifiedCounters[counterId]; // 移除計數為0的項目
+          } else { 
+            counter.classList.remove('hidden');
+            modifiedCounters[counterId] = count; // 儲存計數器和值
+          }
+        }
+      function increment(counterId) {
+        const counter = document.getElementById(counterId);
+        let count = parseInt(counter.value);
+        count += 1;
+        if (count > 20) count = 20;
+        counter.value = count;
+        updateCounter(counterId);
+      }
+      function decrement(counterId) {
+        const counter = document.getElementById(counterId);
+        let count = parseInt(counter.value);
+        count -= 1;
+        if (count < 0) count = 0;
+        counter.value = count;
+        updateCounter(counterId);
+      }
+      // function decrement(counterId) {
+      //   const counter = document.getElementById(counterId);
+      //   let count = parseInt(counter.textContent);
+      //   count -= 1;
+      //   if (count < 0) count = 0;
+      //   counter.textContent = count;
+      //   updateCounter(counterId);
+      // }
+      function sendData() {
+        fetch('/entershoppingCart', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(modifiedCounters),
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+        }) .catch((error) => {
+          console.error('Error:', error);
+        });
+      }
+
+      // 在頁面加載時創建計數器
+      // window.onload = function() {
+      //   const container = document.querySelector('.container');
+      //   {% for item in menu_items %}
+      //   increment('counter{{ loop.index }}'); // 初始化計數器
+      //   decrement('counter{{ loop.index }}'); // 初始化計數器
+      //   {% endfor %} };
+    </script>
+
+  </body>
+</html>

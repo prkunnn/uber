@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>訂單狀態</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .order-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .order-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .order-table th, .order-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .order-table th {
+            background-color: #f0f0f0;
+        }
+        .order-status {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .order-content {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 16px;
+        }
+        .dropdown {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .dropdown select {
+            font-size: 16px;
+            padding: 10px;
+        }
+        .confirm-button {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .confirm-button button {
+            font-size: 24px; /* 增加字体大小 */
+            padding: 10px 80px; /* 增加内边距 */
+        }
+    </style>
+</head>
+<body>
+    <div class="order-container">
+        <div class="order-header">
+            <h1>訂單狀態</h1>
+        </div>
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>訂單編號</th>
+                    <th>訂單狀態</th>
+                    <th>訂單金額</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order %}
+                <tr>
+                    <td>No. {{ item.id }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>${{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="dropdown">
+            <label for="order-content">訂單內容:</label>
+            <select id="order-content">
+                {% for item in fitem %}
+                <option value="{{ item.menu_item_id }}">{{ item.name }} - ${{ item.price }} x {{ item.quantity }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="confirm-button">
+            <form action="/confirm_delivered" method="POST">
+                <button class="btn btn-primary font-weight-bold" type="submit">確認收到</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

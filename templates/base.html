@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}平台管理{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* 樣式設計 */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .nav {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            text-decoration: none;
+            font-weight: bold;
+            color: brown;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航列 -->
+    <div class="nav">
+        <a href="/">主頁</a>
+        <a href="/add_menu">新增菜單</a>
+        <a href="/view_menu">已上架的菜單</a>
+        <a href="/orders">訂單管理</a>
+        <a href="/logout">登出</a>
+        <a href="/main_index">客人菜單</a>
+    </div>
+
+    <!-- 子模板內容 -->
+    {% block content %}{% endblock %}
+</body>
+</html>
