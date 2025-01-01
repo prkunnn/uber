@@ -25,13 +25,18 @@
                 <tr>
                     <td>{{ order.order_id }}</td>
                     <td>{{ order.merchant_name }}</td>
-                    <td>{{ order.merchant_email }}</td>
+                    <td>{{ order.contact_info }}</td>
                     <td>{{ order.delivery_address }}</td>
                     <td>{{ order.status }}</td>
                     <td>
-                        <form action="/delivery_login" method="POST">
+                        <form action="/upd_order_status" method="POST">
                             <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                            <input type="hidden" name="status" value="Accepted">
+                            {% if status.current_status == "Idle" %}
                             <button type="submit" class="btn btn-success">Accept</button>
+                            {% else %}
+                            <button type="submit" class="btn btn-success" disabled>Accept</button>
+                            {% endif %}
                         </form>
                     </td>
                 </tr>

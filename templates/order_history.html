@@ -4,13 +4,13 @@
     <title>Eatery Colorlib Website Template</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
 
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
-
+    
     <link rel="stylesheet" href="css/magnific-popup.css">
 
 
@@ -26,7 +26,7 @@
             margin: 20px;
         }
         .order-container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         .order-header {
@@ -42,6 +42,7 @@
             border: 1px solid #ccc;
             padding: 10px;
             text-align: left;
+            color: black;
         }
         .order-table th {
             background-color: #f0f0f0;
@@ -63,7 +64,7 @@
 
   </head>
   <body>
-    
+    <!-- Start header -->
     <header role="banner">
       <nav class="navbar navbar-expand-md navbar-dark bg-dark">
         <div class="container">
@@ -93,7 +94,7 @@
 
             <ul class="navbar-nav ml-auto">
               <li class="nav-item cta-btn">
-                <a class="nav-link" href="contact.html">Contact Us</a>
+                <a class="nav-link" href="/logout">Log Out</a>
               </li>
             </ul>
             
@@ -124,6 +125,7 @@
               </div>
           </div>
         </div>
+        <!-- <form action="/check_single_order" method="POST"> -->
         <div class="order-container">
             <table class="order-table">
                 <thead>
@@ -131,7 +133,8 @@
                         <th>訂單編號</th>
                         <th>訂單狀態</th>
                         <th>訂單金額</th>
-                        <!-- <th>訂單內容</th> -->
+                        <th>送貨員給評</th>
+                        <th>訂單內容</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -140,6 +143,21 @@
                     <td>No. {{ order.id }}</td>
                     <td>{{ order.status }}</td>
                     <td>${{ order.total_price }}</td>
+                    <td></td>
+                  
+                    <td style="text-align: center; width: 110px;">
+                      <form action="/check_single_order" method="POST">
+                          <input type="hidden" value="{{ order.id }}" name="o_id">
+                          <input type="hidden" value="{{ order.merchant_id }}" name="m_id">
+                          <input type="hidden" value="{{ order.total_price }}" name="total_price">
+                          <input type="hidden" value="{{ order.delivery_person_id }}" name="d_id">
+                          <button type="submit" class="btn btn-danger btn-sm">查看</button>
+                      </form>
+                  <!-- </td> -->
+                    <!-- <td style="text-align: center; width: 110px;" >
+                      <a href="/confirm_order" class="btn btn-danger" style="height: 40px;">查看</a> -->
+                    <!-- <td style="text-align: center; width: 110px;" ><button type="submit" class="btn btn-danger btn-sm">查看</button> -->
+                    <!-- </td> -->
                     <!-- <td>{{order.items}}</td> -->
                     <!-- <td>
                         <ul>
@@ -154,6 +172,7 @@
                 </tbody>
             </table>
         </div>
+        <!-- </form> -->
     </section>
     
     <!-- Start footer-->

@@ -92,9 +92,34 @@
                 {% endfor %}
                 <input type="hidden" value="{{ items|sum(attribute='total_price') }}" name="total_price">
                 <input type="hidden" value="{{ m_id }}" name="m_id">
+                <!-- <input type="hidden" value="True" name="loaded"> -->
                 <button class="btn btn-primary font-weight-bold py-3 px-5" type="submit">確認訂單</button>
             </form>
         </div>
     </div>
+
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // 检查 sessionStorage 中是否存在 'page_loaded' 标志
+            if (sessionStorage.getItem('page_loaded')) {
+                // 如果存在，则阻止表单提交
+                const forms = document.querySelectorAll('form');
+                forms.forEach(form => {
+                    form.addEventListener('submit', (event) => {
+                        event.preventDefault();
+                        console.log('Page was already loaded, form submission prevented.');
+                    });
+                });
+            } else {
+                // 如果不存在，则设置 'page_loaded' 标志
+                sessionStorage.setItem('page_loaded', 'true');
+            }
+        });
+
+        window.addEventListener('beforeunload', (event) => {
+            // 在页面卸载时移除 'page_loaded' 标志
+            sessionStorage.removeItem('page_loaded');
+        });
+    </script> -->
 </body>
 </html>

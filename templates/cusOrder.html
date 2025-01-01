@@ -1,16 +1,33 @@
+{% extends "base_cus.html" %}
+{% block title %}確認當前訂單狀態{% endblock %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>訂單狀態</title>
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Theme Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/style.min.css" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-image: url('img/hero_2.jpg');
+            background-size: 1750px 600px;
+            background-position: top center;
+            background-repeat: no-repeat;
         }
         .order-container {
             max-width: 800px;
             margin: 0 auto;
+            margin-top: 360px;
+            
         }
         .order-header {
             text-align: center;
@@ -29,6 +46,9 @@
         .order-table th {
             background-color: #f0f0f0;
         }
+        .order-table tr {
+            background-color: white;
+        }
         .order-status {
             text-align: right;
             margin-top: 20px;
@@ -42,14 +62,15 @@
         .dropdown {
             text-align: center;
             margin-top: 20px;
+            color: white;
         }
         .dropdown select {
             font-size: 16px;
             padding: 10px;
         }
         .confirm-button {
-            text-align: right;
-            margin-top: 20px;
+            text-align: center;
+            margin-top: 50px;
         }
         .confirm-button button {
             font-size: 24px; /* 增加字体大小 */
@@ -58,9 +79,10 @@
     </style>
 </head>
 <body>
+<!-- <section class="section bg-light element-animate"> -->
     <div class="order-container">
         <div class="order-header">
-            <h1>訂單狀態</h1>
+            <h1 style="color: white;">訂單狀態</h1>
         </div>
         <table class="order-table">
             <thead>
@@ -68,6 +90,7 @@
                     <th>訂單編號</th>
                     <th>訂單狀態</th>
                     <th>訂單金額</th>
+                    <th>外送員評分</th>
                 </tr>
             </thead>
             <tbody>
@@ -76,6 +99,7 @@
                     <td>No. {{ item.id }}</td>
                     <td>{{ item.status }}</td>
                     <td>${{ item.total_price }}</td>
+                    <td></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -90,9 +114,147 @@
         </div>
         <div class="confirm-button">
             <form action="/confirm_delivered" method="POST">
+                {% for item in order %}
+                <input type="hidden" name="o_id" value="{{ item.id }}">
+                {% endfor %}
                 <button class="btn btn-primary font-weight-bold" type="submit">確認收到</button>
             </form>
         </div>
     </div>
+<!-- </section> -->
+
+    <!-- Leave Feedback Start -->
+    <div class="container-fluid pt-5">
+        <div class="container">
+            <div class="section-title">
+                <h4 class="text-primary text-uppercase" style="letter-spacing: 5px;">Leave Comment</h4>
+                {% if deliver == []  %}
+                <h1 class="display-4">No Delivery Person Assigned</h1>
+                {% else %}
+                {% for item in deliver %}
+                <h1 class="display-4">Give {{item.name}} your Feedback</h1>
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 pb-5">
+                </div class = "contact-form"></div>
+                    <div class="contact-form">
+                        <div id="success"></div>
+                        <form action="/feedback" method="POST" id="feedbackForm">
+                            <ul class="list-unstyled d-flex justify-content-between">
+                              <li>
+                                {% for i in range(5) %}
+                                <i id="toggle-star-{{ loop.index }}" class="text-muted fa fa-star"></i>
+                                {% endfor %}
+                              </li>
+                            </ul>
+                            <div class="form-section">
+                                <textarea name="feedback" id="feedback" rows="5" placeholder="Message" class="form-control bg-transparent py-3 px-4" required="required" data-validation-required-message="Please enter your message"></textarea>
+                                <p class="help-block text-danger"></p>
+                            </div>
+                            {% for item in order %}
+                              <input type="hidden" value="{{item.delivery_person_id}}" name="d_id">
+                              <input type="hidden" value="{{item.id}}" name="o_id">
+                            {% endfor %}
+                            <input type="hidden" name="star_count" id="starCount">
+                            <div class="confirm-button">
+                                <button id= "test" onclick="showAlert()">click me</button>
+                                <button class="btn btn-primary font-weight-bold py-3 px-5" type="submit" id="sendMessageButton" style="text-align: right;">Send Feedback</button>
+                                
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </div>
+  <!-- Leave Feedback End -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+            // 检查 sessionStorage 中是否存在 'page_loaded' 标志
+            if (sessionStorage.getItem('page_loaded')) {
+                // 如果存在，则重定向到主页
+                window.location.href = '/main_index';
+            } else {
+                // 如果不存在，则设置 'page_loaded' 标志
+                sessionStorage.setItem('page_loaded', 'true');
+            }
+        });
+        window.addEventListener('beforeunload', (event) => {
+            // 在页面卸载时移除 'page_loaded' 标志
+            sessionStorage.removeItem('page_loaded');
+        });
+    // if (window.history.replaceState) {
+    //     window.history.replaceState(null, null, window.location.href);
+    // }
+        // document.addEventListener('DOMContentLoaded', (event) => {
+        //     // 检查 sessionStorage 中是否存在 'page_loaded' 标志
+        //     if (sessionStorage.getItem('page_loaded')) {
+        //         // 如果存在，则阻止表单提交
+        //         const forms = document.querySelectorAll('form');
+        //         forms.forEach(form => {
+        //             form.addEventListener('submit', (event) => {
+        //                 event.preventDefault();
+        //                 console.log('Page was already loaded, form submission prevented.');
+        //             });
+        //         });
+        //     } else {
+        //         // 如果不存在，则设置 'page_loaded' 标志
+        //         sessionStorage.setItem('page_loaded', 'true');
+        //     }
+        // });
+    // document.addEventListener('DOMContentLoaded', (event) => {
+    //     // 检查 sessionStorage 中是否存在 'order_confirmed' 标志
+    //     if (!sessionStorage.getItem('order_confirmed')) {
+    //         // 如果不存在，则不执行特定的代码
+    //         console.log('Order not confirmed, skipping specific code.');
+    //         return;
+    //     }
+
+    //     // 如果存在，则执行特定的代码
+    //     console.log('Order confirmed, executing specific code.');
+    //     // 在这里添加你想要执行的特定代码
+    // });
+    // document.addEventListener('DOMContentLoaded', (event) => {
+    //         const confirmOrderForm = document.getElementById('confirmOrderForm');
+    //         confirmOrderForm.addEventListener('submit', (event) => {
+    //             // 检查 sessionStorage 中是否存在 'order_confirmed' 标志
+    //             if (sessionStorage.getItem('order_confirmed')) {
+    //                 // 如果存在，则阻止表单提交
+    //                 event.preventDefault();
+    //                 console.log('Order was already confirmed, form submission prevented.');
+    //             }
+    //         });
+    //     });
+    document.addEventListener('DOMContentLoaded', (event) => {
+      const stars = document.querySelectorAll('[id^="toggle-star-"]');
+      stars.forEach(star => {
+        star.addEventListener('click', () => {
+        if (star.classList.contains('text-muted')) {
+            star.classList.remove('text-muted');
+            star.classList.add('text-warning');
+        } else {
+            star.classList.remove('text-warning');
+            star.classList.add('text-muted');
+        }
+    });
+});
+document.getElementById('sendMessageButton').addEventListener('click', (event) => {
+            event.preventDefault(); // 阻止表单默认提交
+            const starCount = document.querySelectorAll('.text-warning.fa-star').length;
+            document.getElementById('starCount').value = starCount;
+            alert(document.getElementById('starCount').value);
+            document.getElementById('feedbackForm').submit(); // 提交表单
+        });
+    });
+
+    function showAlert() {
+        //alert(document.getElementById('starCount').value);
+    }
+</script>
 </body>
 </html>
+{% endblock %}

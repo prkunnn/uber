@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Eatery 外送平台管理{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+
+    <link rel="stylesheet" href="css/magnific-popup.css">
+
+
+    <link rel="stylesheet" href="fonts/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="fonts/flaticons/font/flaticon.css">
+
+    <!-- Theme Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* 樣式設計 */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .nav {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            text-decoration: none;
+            font-weight: bold;
+            color: brown;
+            cursor: pointer;
+        }
+        .nav-link {
+            color: darkred; /* 设置文字颜色为深红色 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航列 -->
+    <!-- Start Header-->
+    <header role="banner">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+          <div class="container">
+            <a class="navbar-brand" href="/main_index">Eatery</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+  
+            <div class="collapse navbar-collapse" id="navbarsExample05">
+              <ul class="navbar-nav ml-auto pl-lg-5 pl-0">
+                <li class="nav-item">
+                  <a class="nav-link active" href="/main_index">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/restaurants">Restaurants</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/order_history">Orders</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/about">About</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/news">News</a>
+                </li>
+              </ul>
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item cta-btn">
+                  <a class="nav-link" href="/logout">Log Out</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <!-- END header -->
+
+      <!-- Start Tpp Slider-->
+    <section class="home-slider owl-carousel">
+        <div class="slider-item" style="background-image: url('img/hero_1.jpg');">
+          
+          <div class="container">
+            <div class="row slider-text align-items-center justify-content-center">
+              <div class="col-md-8 text-center col-sm-12 element-animate">
+                <h1>Good Restaurants</h1>
+                <p class="mb-5">與本地國際知名餐廳合作，提供多樣化的美食選擇，讓您每餐都能有新鮮的驚喜。</p>
+                <p><a href="/customer_regi" class="btn btn-white btn-outline-white">Scroll Down to Eat</a></p>
+              </div>
+            </div>
+          </div>
+  
+        </div>
+  
+        <div class="slider-item" style="background-image: url('img/hero_2.jpg');">
+          <div class="container">
+            <div class="row slider-text align-items-center justify-content-center">
+              <div class="col-md-8 text-center col-sm-12 element-animate">
+                <h1>Efficient Delivery</h1>
+                <p class="mb-5">經過培訓的專業配送員，確保您的美食安全快捷地送達。</p>
+                <p><a href="#" class="btn btn-white btn-outline-white">Scroll Down to Eat</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- END Top slider -->
+      
+      <!-- <div class="nav">
+        <a href="/">主頁</a>
+        <a href="/add_menu">新增菜單</a>
+        <a href="/view_menu">已上架的菜單</a>
+        <a href="/orders">訂單管理</a>
+        <a href="/logout">登出</a>
+        <a href="/main_index">客人菜單</a>
+    </div> -->
+    <!-- 子模板內容 -->
+    {% block content %}{% endblock %}
+</body>
+</html>

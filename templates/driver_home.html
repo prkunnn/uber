@@ -8,13 +8,14 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center">Welcome, {{ session['driver_name'] }}</h2>
+        <h2 class="text-center">Welcome, {{ deliver_name }}</h2>
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 class="card-title">Assigned Orders</h5>
-                        <p class="card-text">View and accept orders assigned to you.</p>
+                        <p class="card-text">View and accept orders assigned to you. </p>
+                        <p>查看待送訂單</p><br><br>
                         <a href="/assigned_orders" class="btn btn-primary">View Orders</a>
                     </div>
                 </div>
@@ -22,9 +23,24 @@
             <div class="col-md-4">
                 <div class="card text-center">
                     <div class="card-body">
-                        <h5 class="card-title">Orders Out for Delivery</h5>
+                        
+                        <h5 class="card-title">Picked Up Food </h5>
                         <p class="card-text">Start delivery for accepted orders.</p>
-                        <a href="/start_delivery" class="btn btn-warning">Start Delivery</a>
+                        <p>取貨完成</p>
+                        
+                        <form action="/upd_order_status" method="POST">
+                        {% for id in order_id %}
+                        {% if id.status == "Accepted" %}
+                        <input type="" name="order_id" value="{{id.id}}">
+                        {% endif %}
+                        {% endfor %}
+                        <br><br>
+                            <input type="hidden" name="status" value="PickedUp">
+                            <button type="submit" class="btn btn-warning">Picked Up</button><br>
+
+                        </form>
+                        
+                        <!-- <a href="/upd_order_status" class="btn btn-warning">Picked Up</a> -->
                     </div>
                 </div>
             </div>
@@ -32,8 +48,18 @@
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 class="card-title">Complete Orders</h5>
-                        <p class="card-text">Mark orders as delivered.</p>
-                        <a href="/complete_order" class="btn btn-success">Complete Orders</a>
+                        <p class="card-text">Mark orders as delivered. </p>
+                        <p>送達簽收</p>
+
+                        <form action="/upd_order_status" method="POST">
+                        {% for id in order_id %}
+                        <input type="" name="order_id" value="{{id.id}}">
+                        {% endfor %}
+                        <br><br>
+                            <input type="hidden" name="status" value="Delivered">
+                            <button type="submit" class="btn btn-success">Complete Orders</button>
+                        </form>
+                        <!-- <a href="/complete_order" class="btn btn-success">Complete Orders</a> -->
                     </div>
                 </div>
             </div>

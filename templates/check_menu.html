@@ -40,7 +40,15 @@
     <style> 
     .hidden { display: none; } 
     .counter { font-size: 24px; margin-top: 20px; width: 50px; text-align: center;} 
-    button { padding: 10px 20px; font-size: 22px; margin: 5px; } </style>
+    button { padding: 10px 20px; font-size: 22px; margin: 5px; }
+
+    .text-warning {
+            color: #ffc107;
+        }
+        .text-muted {
+            color: #6c757d;
+        }
+    </style>
   </head>
   <body>
     
@@ -64,14 +72,6 @@
               <li class="nav-item">
                 <a class="nav-link" href="/restaurants">Orders</a>
               </li>
-              <!-- <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="services.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Services</a>
-                <div class="dropdown-menu" aria-labelledby="dropdown04">
-                  <a class="dropdown-item" href="services.html">Catering</a>
-                  <a class="dropdown-item" href="services.html">Birthday Party</a>
-                  <a class="dropdown-item" href="services.html">Wedding Party</a>
-                </div>
-              </li> -->
               <li class="nav-item">
                 <a class="nav-link" href="/about">About</a>
               </li>
@@ -82,7 +82,7 @@
 
             <ul class="navbar-nav ml-auto">
               <li class="nav-item cta-btn">
-                <a class="nav-link" href="contact.html">Contact Us</a>
+                <a class="nav-link" href="/logout">Log Out</a>
               </li>
             </ul>
             
@@ -156,7 +156,7 @@
           <div>
             <button class="hidden"></button>
             <button class="hidden" onclick="sendData()">Send Data</button>
-            <button class="btn btn-primary font-weight-bold py-3 px-5" type="submit" id="sendMessageButton">加入購物車</button>
+            <button class="btn btn-primary font-weight-bold py-3 px-5" type="submit" id="sendOrderButton">加入購物車</button>
         </div>
         </form>
         </div>
@@ -180,7 +180,21 @@
                 <div class="ml-3">
                     <h4>{{item.cName}}</h4>
                     <i>{{item.created_at}}</i><br>
-                    <i>{{item.rating}} stars</i>
+                    <!-- <i>{{item.rating}} stars</i> -->
+                    <ul class="list-unstyled d-flex justify-content-between">
+                      <li>
+                        {% for i in range(item.rating) %}
+                          <i class="text-warning fa fa-star"></i>
+                        {% endfor %}
+                        {% for i in range(5-item.rating) %}
+                          <i class="text-muted fa fa-star"></i>
+                        {% endfor %}
+                          <!-- <i class="text-warning fa fa-star"></i>
+                          <i class="text-warning fa fa-star"></i> -->
+                          <!-- <i class="text-muted fa fa-star"></i>
+                          <i class="text-muted fa fa-star"></i> -->
+                      </li>
+                  </ul>
                     <p class="m-0">{{item.feedback_text}}</p>
                 </div>
               </div>
@@ -205,7 +219,7 @@
                   </div class = "contact-form"></div>
                       <div class="contact-form">
                           <div id="success"></div>
-                          <form action="/feedback" method="POST" >
+                          <form action="/feedback" method="POST" id="feedbackForm">
                               <!-- <div class="control-group">
                                   <input type="text" class="form-control bg-transparent p-4" id="name" placeholder="Your Name"
                                       required="required" data-validation-required-message="Please enter your name" />
@@ -216,6 +230,13 @@
                                       required="required" data-validation-required-message="Please enter a subject" />
                                   <p class="help-block text-danger"></p>
                               </div> -->
+                              <ul class="list-unstyled d-flex justify-content-between" id="rating">
+                                <li>
+                                  {% for i in range(5) %}
+                                  <i id="toggle-star-{{ loop.index }}" class="text-muted fa fa-star"></i>
+                                  {% endfor %}
+                                </li>
+                              </ul>
                               <div class="form-section">
                                   <textarea name="feedback" id="feedback" rows="5" placeholder="Message" class="form-control bg-transparent py-3 px-4" required="required" data-validation-required-message="Please enter your message"></textarea>
                                   <p class="help-block text-danger"></p>
@@ -223,8 +244,10 @@
                               {% for item in merchant %}
                                 <input type="hidden" value="{{item.id}}" name="m_id">
                               {% endfor %}
+                              <input type="hidden" name="star_count" id="starCount">
                               <div>
                                   <button class="btn btn-primary font-weight-bold py-3 px-5" type="submit" id="sendMessageButton">Send Feedback</button>
+                                  <button id= "test" onclick="showAlert()">click me</button>
                               </div>
                           </form>
                       </div>
@@ -373,6 +396,34 @@
       //   increment('counter{{ loop.index }}'); // 初始化計數器
       //   decrement('counter{{ loop.index }}'); // 初始化計數器
       //   {% endfor %} };
+
+
+      // Rating stars mechanism
+      document.addEventListener('DOMContentLoaded', (event) => {
+      const stars = document.querySelectorAll('[id^="toggle-star-"]');
+      stars.forEach(star => {
+        star.addEventListener('click', () => {
+        if (star.classList.contains('text-muted')) {
+            star.classList.remove('text-muted');
+            star.classList.add('text-warning');
+        } else {
+            star.classList.remove('text-warning');
+            star.classList.add('text-muted');
+        }
+    });
+});
+document.getElementById('sendMessageButton').addEventListener('click', (event) => {
+            event.preventDefault(); // 阻止表单默认提交
+            const starCount = document.querySelectorAll('#rating .text-warning.fa-star').length;
+            document.getElementById('starCount').value = starCount;
+            alert(document.getElementById('starCount').value);
+            document.getElementById('feedbackForm').submit(); // 提交表单
+        });
+    });
+
+    function showAlert() { 
+      //alert(document.getElementById('starCount').value);
+    }
     </script>
 
   </body>
