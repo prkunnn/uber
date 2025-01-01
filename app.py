@@ -72,10 +72,18 @@ def login():
 # Route: Logout
 @app.route('/logout')
 def logout():
+    deliver_id = session['deliver_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE deliveryperson SET current_status = 'Offline' WHERE id = %s", (deliver_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
     session.clear()
     return redirect(url_for('frontPage'))
 
-# Route: View Orders
+# Route: View Orders 查看
 @app.route('/orders', methods=['GET'])
 def view_orders():
     if 'merchant_id' not in session:
@@ -92,7 +100,9 @@ def view_orders():
         FROM `order` o
         JOIN customer c ON o.customer_id = c.id
         WHERE o.merchant_id = %s
-        ORDER BY o.created_at DESC
+        AND o.status != 'Delivered'
+        AND o.status != 'Received'
+        ORDER BY o.created_at ASC
     """, (merchant_id,))
     orders = cursor.fetchall()
     cursor.close()
@@ -110,7 +120,7 @@ def add_menu():
         name = request.form['name']
         price = request.form['price']
         description = request.form['description']
-        availability_status = request.form['availability_status']
+        # availability_status = request.form['availability_status']
         merchant_id = session['merchant_id']
 
         # Insert the menu item into the database
@@ -118,10 +128,10 @@ def add_menu():
         cursor = conn.cursor()
         cursor.execute(
             """
-            INSERT INTO menuitem (name, price, description, availability_status, merchant_id)
+            INSERT INTO menuitem (name, price, description, merchant_id)
             VALUES (%s, %s, %s, %s, %s)
             """,
-            (name, price, description, availability_status, merchant_id)
+            (name, price, description, merchant_id)
         )
         conn.commit()
         cursor.close()
@@ -414,7 +424,7 @@ def confirm_order():
 
     return render_template('cusOrder.html', order=order, fitem=fitem, deliver=deliver)
 
-# Route: 收貨
+# Route: 客戶收貨
 @app.route("/confirm_delivered", methods=['POST'])
 def confirm_delivered():
     customer_id = session['customer_id']
@@ -441,25 +451,25 @@ def order_history():
     orders = cursor.fetchall()
     cursor.execute("SELECT * FROM `feedback` WHERE customer_id = %s AND LENGTH(target_id) >6 ORDER BY created_at DESC LIMIT 30;", (customer_id,))
     feedbacks = cursor.fetchall()
-    return jsonify(feedbacks)
+    # return jsonify(feedbacks)
     target_ids = [feedback['target_id'] for feedback in feedbacks]
     # return jsonify(target_ids)
-    order_ids = []
-    deliver_ids = []
-    for id in target_ids:
-        parts = id.split('_')
-        if len(parts) == 2:
-            deliver_ids.append(int(parts[0])-10000)
-            order_ids.append(parts[1])
-    return jsonify(order_ids, deliver_ids)
-    rating = []
-    for feedback in feedbacks:
-        return jsonify(feedback['target_id'])
-        for key, value in feedback.target_id:
-            order_id = key.split('_')[1]
-            deliver_id = key.split('_')[0]
-            rating.append(feedback['rating'])
-    return jsonify(rating)
+    # order_ids = []
+    # deliver_ids = []
+    # for id in target_ids:
+    #     parts = id.split('_')
+    #     if len(parts) == 2:
+    #         deliver_ids.append(int(parts[0])-10000)
+    #         order_ids.append(parts[1])
+    # # return jsonify(order_ids, deliver_ids)
+    # rating = []
+    # for feedback in feedbacks:
+    #     # return jsonify(feedback['target_id'])
+    #     for key, value in feedback.target_id:
+    #         order_id = key.split('_')[1]
+    #         deliver_id = key.split('_')[0]
+    #         rating.append(feedback['rating'])
+    # return jsonify(rating)
     order_details = []
     for order in orders:
         cursor.execute("SELECT orderitem.menu_item_id, orderitem.quantity, orderitem.price, menuitem.name FROM `orderitem` JOIN `menuitem` ON orderitem.menu_item_id = menuitem.id WHERE order_id = %s;", (order['id'],))
@@ -578,7 +588,7 @@ def news():
 #-------------------------------------------------------------------------------------------------------------
 
 
-# Route: Deliver Registration
+# Route: Deliver Registration 外送員註冊
 @app.route('/deliver_regi', methods=['GET', 'POST'])
 def deliver_regi():
     if request.method == 'POST':
@@ -603,7 +613,7 @@ def deliver_regi():
             conn.close()
     return render_template('deliverRegister.html')
 
-# Route: Deliver Login
+# Route: Deliver Login 外送員燈入
 @app.route('/deliver_login', methods=['GET', 'POST'])
 def deliver_login():
     if request.method == 'POST':
@@ -612,10 +622,11 @@ def deliver_login():
 
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cur
+        # 防呆機制
+        cursor.execute("UPDATE deliveryperson SET current_status = 'Idle' WHERE contact_info = %s", (phone,))
+
         cursor.execute("SELECT * FROM deliveryperson WHERE contact_info = %s", (phone,))
         deliver = cursor.fetchone()
-
         cursor.close()
         conn.close()
         # return jsonify(deliver['password'], password)
@@ -629,7 +640,7 @@ def deliver_login():
             return jsonify({'error': 'Invalid email or password'})
     return render_template('deliveryLogin.html', merchant_login=True)
 
-# Route: Deliver Home
+# Route: Deliver Home 外送員主頁
 @app.route('/driverHome', methods=['GET'])
 def deliverHome():
     if 'deliver_id' not in session:
@@ -639,7 +650,7 @@ def deliverHome():
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT id, status FROM `order` WHERE delivery_person_id = %s AND status = %s or status =  %s", (deliver_id,'Accepted', 'PickedUp'))
+    cursor.execute("SELECT id, status FROM `order` WHERE delivery_person_id = %s AND status = %s or status = %s or status = %s", (deliver_id,'Accepted', 'PickedUp', 'Ready for Pickup'))
     order_id = cursor.fetchall()
 
     # cursor.fetchall()
@@ -647,7 +658,6 @@ def deliverHome():
     conn.close()
     # return jsonify(order_id)
     return render_template('driver_home.html', deliver_name=deliver_name, order_id=order_id)
-
 
 # Route: View Assigned Orders
 @app.route('/assigned_orders', methods=['GET'])
@@ -666,8 +676,8 @@ def assigned_orders():
                c.name AS customer_name, m.name AS merchant_name, m.contact_info 
         FROM `merchant` m, `order` o
         JOIN customer c ON o.customer_id = c.id
-        WHERE o.status = "Pending"
-        AND o.merchant_id = m.id
+        WHERE o.merchant_id = m.id AND
+        (o.status = "In Progress" or o.status = "Ready for Pickup")
         ORDER BY o.created_at ASC
     """)
     orders = cursor.fetchall()
