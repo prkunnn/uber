@@ -1,0 +1,99 @@
+      .search_input {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    width: 96.862%;
+    mix-blend-mode: normal;
+    background: url("../images/stores_main/search.svg") no-repeat 0px;
+    background-size: 16px;
+    padding: 15px 0px 15px 24px;
+   border-bottom: 1px solid  rgb(117, 117, 117, 0.3); 
+   border-bottom: 1px solid  rgba(117, 117, 117, 0.3);
+   margin-top: 104px; 
+}
+@media (min-width: 768px) {.search_input {margin-top: 112px;}}
+
+.search_input::-webkit-input-placeholder {
+    color: rgb(98, 98, 98, 0.5);
+    color:rgba(98, 98, 98, 0.5);
+}
+
+.search_input:-ms-input-placeholder {
+    color: rgb(98, 98, 98, 0.5);
+    color:rgba(98, 98, 98, 0.5);
+}
+
+.search_input::-ms-input-placeholder {
+    color: rgb(98, 98, 98, 0.5);
+    color:rgba(98, 98, 98, 0.5);
+}
+
+.search_input::placeholder {
+    color: rgb(98, 98, 98, 0.5);
+    color:rgba(98, 98, 98, 0.5);
+}
+.text-xs {
+    display: inline-block;
+    color: #626262;
+    font-size: 11px;
+    margin: 24px 53px 8px 0px;
+}
+@media (min-width: 768px){.text-xs {
+    display: none;}}
+.time-xs {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+@media (min-width: 768px){.time-xs {
+    display: none;}}
+.title {
+    font-family: Roboto;
+font-style: normal;
+font-weight: normal;
+font-size: 22px;
+line-height: 34px;
+    margin-top: 6.172%;
+    display: block;
+    margin-bottom: 1.673%;
+}
+.card {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    margin-bottom: 16.7364%;
+}
+.restaraunt_picture {
+width: 100%;
+height: 33.2635%;
+
+}
+.restaraunt_name {
+margin-top: 5.1948%;
+font-style: normal;
+font-weight: normal;
+font-size: 16px;
+line-height: 24px;
+}
+.restaraunt_type {
+margin-top: 1.1%;
+color: #626262;
+font-style: normal;
+font-weight: normal;
+font-size: 14px;
+line-height: 21px;    
+}
+.restaraunt_time {
+    margin-top: 1.1%;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 21px;
+color: #1D1D1D;
+}
