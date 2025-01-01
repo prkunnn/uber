@@ -10,7 +10,7 @@ app.secret_key = 'your_secret_key'  # Replace with a secure key
 # Database configuration
 db_config = {
     'user': 'root',  # Replace with your MySQL username
-    'password': 'password',  # Replace with your MySQL password
+    'password': '',  # Replace with your MySQL password
     'host': 'localhost',
     'database': 'foodpangolin'  # Replace with your database name
 }
