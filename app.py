@@ -12,7 +12,7 @@ db_config = {
     'user': 'root',  # Replace with your MySQL username
     'password': '',  # Replace with your MySQL password
     'host': 'localhost',
-    'database': 'foodpangolin'  # Replace with your database name
+    'database': 'begin'  # Replace with your database name
 }
 
 # Function to connect to the database
