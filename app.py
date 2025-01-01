@@ -10,7 +10,7 @@ app.secret_key = 'your_secret_key'  # Replace with a secure key
 # Database configuration
 db_config = {
     'user': 'root',  # Replace with your MySQL username
-    'password': '',  # Replace with your MySQL password
+    'password': 'password',  # Replace with your MySQL password
     'host': 'localhost',
     'database': 'foodpangolin'  # Replace with your database name
 }
@@ -384,7 +384,7 @@ def confirm_order():
 
             if existing_items_set == new_items_set:
                 # 如果订单项相同，则不插入新的订单
-                cursor.execute("SELECT DISTINCT id, status, total_price, delivery_person_id FROM `order` WHERE customer_id = %s ORDER BY created_at DESC LIMIT 1;", (customer_id,))
+                cursor.execute("SELECT  id, status, total_price, delivery_person_id FROM `order` WHERE customer_id = %s ORDER BY created_at DESC LIMIT 1;", (customer_id,))
                 order = cursor.fetchall()
                 cursor.execute("SELECT name FROM `deliveryperson` WHERE id = %s", (order[0]['delivery_person_id'],))
                 deliver = cursor.fetchall()
@@ -400,7 +400,7 @@ def confirm_order():
             cursor.fetchone()
             #order.append(cursor.fetchone())
         cursor.execute("UPDATE orderitem SET order_id = (SELECT id FROM `order` ORDER BY created_at DESC LIMIT 1) Where order_id IS NULL;")
-        cursor.execute("SELECT DISTINCT id, status, total_price, delivery_person_id FROM `order` WHERE customer_id = %s ORDER BY created_at DESC LIMIT 1;", (customer_id,))
+        cursor.execute("SELECT id, status, total_price, delivery_person_id FROM `order` WHERE customer_id = %s ORDER BY created_at DESC LIMIT 1;", (customer_id,))
         order = cursor.fetchall()
         cursor.execute("SELECT name FROM `deliveryperson` WHERE id = %s", (order[0]['delivery_person_id'],))
         deliver = cursor.fetchall()
