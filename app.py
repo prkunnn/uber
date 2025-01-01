@@ -12,75 +12,77 @@ db_config = {
     'user': 'root',  # Replace with your MySQL username
     'password': '',  # Replace with your MySQL password
     'host': 'localhost',
-    'database': 'begin'  # Replace with your database name
+    'database': 'foodpangolin'  # Replace with your database name
 }
 
 # Function to connect to the database
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 
-# 路由：商家註冊
+# Route: Merchant Registration
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':  # 如果請求方法是 POST，表示提交註冊表單
-        name = request.form['name']  # 獲取表單中的商家名稱
-        email = request.form['email']  # 獲取表單中的電子郵件
-        password = request.form['password']  # 獲取表單中的密碼
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
 
-        # 在儲存至資料庫之前對密碼進行雜湊處理
+        # Hash the password before saving to the database
         hashed_password = generate_password_hash(password)
 
-        conn = get_db_connection()  # 獲取資料庫連線
+        conn = get_db_connection()
         cursor = conn.cursor()
         try:
-            # 插入商家資料到 merchant 資料表
             cursor.execute("INSERT INTO merchant (name, email, password) VALUES (%s, %s, %s)",
-                           (name, email, hashed_password))
-            conn.commit()  # 提交變更
-            return redirect(url_for('login'))  # 註冊成功後導向登入頁面
+                           (name, email, password))
+            conn.commit()
+            return redirect(url_for('login'))
         except mysql.connector.Error as err:
-            return jsonify({'error': str(err)})  # 捕捉並返回錯誤訊息
+            return jsonify({'error': str(err)})
         finally:
             cursor.close()
             conn.close()
-    return render_template('register.html')  # 渲染註冊頁面
+    return render_template('register.html')
 
-# 路由：商家登入
+# Route: Merchant Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':  # 如果請求方法是 POST，表示提交登入表單
-        email = request.form['email']  # 獲取表單中的電子郵件
-        password = request.form['password']  # 獲取表單中的密碼
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
 
-        conn = get_db_connection()  # 獲取資料庫連線
+        conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM merchant WHERE email = %s", (email,))  # 查詢商家資料
-        merchant = cursor.fetchone()  # 獲取查詢結果
+        cursor.execute("SELECT * FROM merchant WHERE email = %s", (email,))
+        merchant = cursor.fetchone()
+        #return jsonify(merchant['password'], password)
         cursor.close()
         conn.close()
-
-        if merchant and check_password_hash(merchant['password'], password):  # 驗證密碼是否正確
-            session['merchant_id'] = merchant['id']  # 儲存商家 ID 到 session
-            session['merchant_name'] = merchant['name']  # 儲存商家名稱到 session
-            return redirect(url_for('view_orders'))  # 登入成功後導向查看訂單頁面
+        #return jsonify(merchant['password'], password)
+        #if check_password_hash(merchant['password'], password):
+        if merchant['password'] == password:
+            #return jsonify(merchant['password'], password)
+            session['merchant_id'] = merchant['id']
+            session['merchant_name'] = merchant['name']
+            return redirect(url_for('view_orders'))
         else:
-            return jsonify({'error': 'Invalid email or password!'})  # 返回錯誤訊息
-    return render_template('login.html')  # 渲染登入頁面
+            return jsonify({'error': 'Invalid email or password!'})
+    return render_template('login.html')
 
-# 路由：登出
+# Route: Logout
 @app.route('/logout')
 def logout():
-    session.clear()  # 清空 session 資料
-    return redirect(url_for('frontPage'))  # 導向主頁面
+    session.clear()
+    return redirect(url_for('frontPage'))
 
-# 路由：查看訂單
+# Route: View Orders
 @app.route('/orders', methods=['GET'])
 def view_orders():
-    if 'merchant_id' not in session:  # 確認商家是否已登入
+    if 'merchant_id' not in session:
         return redirect(url_for('login'))
 
-    merchant_id = session['merchant_id']  # 從 session 獲取商家 ID
-    conn = get_db_connection()  # 獲取資料庫連線
+    merchant_id = session['merchant_id']
+    conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
     # 查詢該商家所有訂單
@@ -92,26 +94,27 @@ def view_orders():
         WHERE o.merchant_id = %s
         ORDER BY o.created_at DESC
     """, (merchant_id,))
-    orders = cursor.fetchall()  # 獲取所有訂單
+    orders = cursor.fetchall()
     cursor.close()
     conn.close()
 
-    return render_template('orders.html', orders=orders)  # 渲染訂單頁面
+    return render_template('orders.html', orders=orders)
 
-# 路由：新增菜單項目
+# Route: Add Menu Item
 @app.route('/add_menu', methods=['GET', 'POST'])
 def add_menu():
-    if 'merchant_id' not in session:  # 確認商家是否已登入
+    if 'merchant_id' not in session:
         return redirect(url_for('login'))
 
-    if request.method == 'POST':  # 如果請求方法是 POST，表示提交新增表單
-        name = request.form['name']  # 獲取菜單名稱
-        price = request.form['price']  # 獲取菜單價格
-        description = request.form['description']  # 獲取菜單描述
-        availability_status = request.form['availability_status']  # 獲取菜單狀態
-        merchant_id = session['merchant_id']  # 從 session 獲取商家 ID
+    if request.method == 'POST':
+        name = request.form['name']
+        price = request.form['price']
+        description = request.form['description']
+        availability_status = request.form['availability_status']
+        merchant_id = session['merchant_id']
 
-        conn = get_db_connection()  # 獲取資料庫連線
+        # Insert the menu item into the database
+        conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(
             """
@@ -120,89 +123,90 @@ def add_menu():
             """,
             (name, price, description, availability_status, merchant_id)
         )
-        conn.commit()  # 提交變更
+        conn.commit()
         cursor.close()
         conn.close()
 
-        return redirect(url_for('view_menu'))  # 重定向到查看菜單頁面
+        return redirect(url_for('view_menu'))  # Redirect to view menu page
 
-    return render_template('add_menu.html')  # 渲染新增菜單頁面
+    return render_template('add_menu.html')
 
-# 路由：查看菜單項目
+# Route: View Menu Items
 @app.route('/view_menu', methods=['GET'])
 def view_menu():
-    if 'merchant_id' not in session:  # 確認商家是否已登入
+    if 'merchant_id' not in session:
         return redirect(url_for('login'))
 
-    conn = get_db_connection()  # 獲取資料庫連線
+    conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    merchant_id = session['merchant_id']  # 從 session 獲取商家 ID
+    merchant_id = session['merchant_id']
 
-    # 查詢所有菜單項目
+    # Fetch all menu items for the merchant
     cursor.execute("SELECT * FROM menuitem WHERE merchant_id = %s", (merchant_id,))
-    menu_items = cursor.fetchall()  # 獲取菜單資料
+    menu_items = cursor.fetchall()
     cursor.close()
     conn.close()
 
-    return render_template('view_menu.html', menu_items=menu_items)  # 渲染菜單頁面
+    return render_template('view_menu.html', menu_items=menu_items)
 
-# 路由：更新訂單狀態
+# Route: Update Order Status
 @app.route('/update_order_status', methods=['POST'])
 def update_order_status():
-    if 'merchant_id' not in session:  # 確認商家是否已登入
+    if 'merchant_id' not in session:
         return redirect(url_for('login'))
 
-    order_id = request.form['order_id']  # 獲取訂單 ID
-    new_status = request.form['status']  # 獲取新狀態
+    order_id = request.form['order_id']
+    new_status = request.form['status']
 
-    conn = get_db_connection()  # 獲取資料庫連線
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE `order` SET status = %s WHERE id = %s AND merchant_id = %s
     """, (new_status, order_id, session['merchant_id']))
-    conn.commit()  # 提交變更
+    conn.commit()
     cursor.close()
     conn.close()
 
-    return redirect(url_for('view_orders'))  # 重定向到訂單頁面
+    return redirect(url_for('view_orders'))
 
-# 路由：主頁
+# Route: Home Page
 @app.route('/', methods=['GET'])
 def home():
-    if 'customer_id' not in session:  # 如果客戶未登入
-        return redirect(url_for('frontPage'))  # 重定向到主頁
-    elif 'merchant_id' not in session:  # 如果商家未登入
-        return redirect(url_for('frontPage'))  # 重定向到登入頁面
+    if 'customer_id' not in session:
+        return redirect(url_for('frontPage'))  # 如果未登入，重定向到主登入頁面
+    else:
+        return redirect(url_for('main_index'))
+    if 'merchant_id' not in session:
+        return redirect(url_for('frontPage'))  # 如果未登入，重定向到登入頁面
     return render_template('home.html')  # 渲染主頁模板
 
-# 路由：管理菜單
 @app.route('/menu', methods=['GET', 'POST'])
 def manage_menu():
-    if 'merchant_id' not in session:  # 確認商家是否已登入
+    if 'merchant_id' not in session:
         return redirect(url_for('login'))
 
-    conn = get_db_connection()  # 獲取資料庫連線
+    conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
     # 處理刪除請求
     if request.method == 'GET' and 'delete_id' in request.args:
-        delete_id = request.args.get('delete_id')  # 獲取刪除的菜單項目 ID
-        merchant_id = session['merchant_id']  # 從 session 獲取商家 ID
+        delete_id = request.args.get('delete_id')
+        merchant_id = session['merchant_id']
 
         # 刪除符合條件的菜單項目
         cursor.execute("DELETE FROM menuitem WHERE id = %s AND merchant_id = %s", (delete_id, merchant_id))
-        conn.commit()  # 提交變更
+        conn.commit()
         cursor.close()
         conn.close()
-        return redirect(url_for('manage_menu'))  # 刪除後重定向
+        return redirect(url_for('manage_menu'))  # 刪除後重定向回菜單頁面
 
     # 處理新增或更新菜單項目
     if request.method == 'POST':
-        name = request.form['name']  # 獲取菜單名稱
-        price = request.form['price']  # 獲取價格
-        description = request.form['description']  # 獲取描述
-        availability_status = request.form['availability_status']  # 獲取狀態
-        merchant_id = session['merchant_id']  # 從 session 獲取商家 ID
+        name = request.form['name']
+        price = request.form['price']
+        description = request.form['description']
+        availability_status = request.form['availability_status']
+        merchant_id = session['merchant_id']
 
         # 插入或更新菜單項目
         cursor.execute("""
@@ -213,15 +217,15 @@ def manage_menu():
             description = VALUES(description),
             availability_status = VALUES(availability_status)
         """, (name, price, description, availability_status, merchant_id))
-        conn.commit()  # 提交變更
+        conn.commit()
 
     # 顯示所有菜單項目
     cursor.execute("SELECT * FROM menuitem WHERE merchant_id = %s", (session['merchant_id'],))
-    menu_items = cursor.fetchall()  # 獲取菜單資料
+    menu_items = cursor.fetchall()
     cursor.close()
     conn.close()
 
-    return render_template('view_menu.html', menu_items=menu_items)  # 渲染菜單頁面
+    return render_template('view_menu.html', menu_items=menu_items)
 
 #-------------------------------------------------------------------------------------------------------------
 
@@ -380,7 +384,7 @@ def confirm_order():
 
             if existing_items_set == new_items_set:
                 # 如果订单项相同，则不插入新的订单
-                cursor.execute("SELECT  id, status, total_price, delivery_person_id FROM `order` WHERE customer_id = %s ORDER BY created_at DESC LIMIT 1;", (customer_id,))
+                cursor.execute("SELECT DISTINCT id, status, total_price, delivery_person_id FROM `order` WHERE customer_id = %s ORDER BY created_at DESC LIMIT 1;", (customer_id,))
                 order = cursor.fetchall()
                 cursor.execute("SELECT name FROM `deliveryperson` WHERE id = %s", (order[0]['delivery_person_id'],))
                 deliver = cursor.fetchall()
@@ -396,7 +400,7 @@ def confirm_order():
             cursor.fetchone()
             #order.append(cursor.fetchone())
         cursor.execute("UPDATE orderitem SET order_id = (SELECT id FROM `order` ORDER BY created_at DESC LIMIT 1) Where order_id IS NULL;")
-        cursor.execute("SELECT id, status, total_price, delivery_person_id FROM `order` WHERE customer_id = %s ORDER BY created_at DESC LIMIT 1;", (customer_id,))
+        cursor.execute("SELECT DISTINCT id, status, total_price, delivery_person_id FROM `order` WHERE customer_id = %s ORDER BY created_at DESC LIMIT 1;", (customer_id,))
         order = cursor.fetchall()
         cursor.execute("SELECT name FROM `deliveryperson` WHERE id = %s", (order[0]['delivery_person_id'],))
         deliver = cursor.fetchall()
@@ -435,12 +439,32 @@ def order_history():
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM `order` WHERE customer_id = %s ORDER BY created_at DESC LIMIT 30;", (customer_id,))
     orders = cursor.fetchall()
+    cursor.execute("SELECT * FROM `feedback` WHERE customer_id = %s AND LENGTH(target_id) >6 ORDER BY created_at DESC LIMIT 30;", (customer_id,))
+    feedbacks = cursor.fetchall()
+    return jsonify(feedbacks)
+    target_ids = [feedback['target_id'] for feedback in feedbacks]
+    # return jsonify(target_ids)
+    order_ids = []
+    deliver_ids = []
+    for id in target_ids:
+        parts = id.split('_')
+        if len(parts) == 2:
+            deliver_ids.append(int(parts[0])-10000)
+            order_ids.append(parts[1])
+    return jsonify(order_ids, deliver_ids)
+    rating = []
+    for feedback in feedbacks:
+        return jsonify(feedback['target_id'])
+        for key, value in feedback.target_id:
+            order_id = key.split('_')[1]
+            deliver_id = key.split('_')[0]
+            rating.append(feedback['rating'])
+    return jsonify(rating)
     order_details = []
     for order in orders:
         cursor.execute("SELECT orderitem.menu_item_id, orderitem.quantity, orderitem.price, menuitem.name FROM `orderitem` JOIN `menuitem` ON orderitem.menu_item_id = menuitem.id WHERE order_id = %s;", (order['id'],))
         order_items = cursor.fetchall()
         order['items'] = order_items
-        
         #order_details.append(order)
     # return jsonify(orders.items().name)
     # for i in orders:
@@ -588,8 +612,10 @@ def deliver_login():
 
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
+        cur
         cursor.execute("SELECT * FROM deliveryperson WHERE contact_info = %s", (phone,))
         deliver = cursor.fetchone()
+
         cursor.close()
         conn.close()
         # return jsonify(deliver['password'], password)
