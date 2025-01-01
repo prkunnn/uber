@@ -32,6 +32,7 @@
                         <form action="/upd_order_status" method="POST">
                             <input type="hidden" name="order_id" value="{{ order.order_id }}">
                             <input type="hidden" name="status" value="Accepted">
+                            
                             {% if status.current_status == "Idle" %}
                             <button type="submit" class="btn btn-success">Accept</button>
                             {% else %}

@@ -9,6 +9,7 @@
 <body>
     <div class="container mt-5">
         <h2 class="text-center">Welcome, {{ deliver_name }}</h2>
+        
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="card text-center">
@@ -30,14 +31,19 @@
                         
                         <form action="/upd_order_status" method="POST">
                         {% for id in order_id %}
-                        {% if id.status == "Accepted" %}
+                        {% if id.status == "Accepted" or id.status == "Ready for Pickup" %}
                         <input type="" name="order_id" value="{{id.id}}">
                         {% endif %}
                         {% endfor %}
                         <br><br>
-                            <input type="hidden" name="status" value="PickedUp">
-                            <button type="submit" class="btn btn-warning">Picked Up</button><br>
-
+                        <input type="hidden" name="status" value="PickedUp">
+                        <!-- <button type="submit" class="btn btn-warning"  disabled>Picked Up</button> -->
+                        {% if order_id and order_id[0].status == "Ready for Pickup" %}
+                        <button type="submit" class="btn btn-warning">Picked Up</button><br>
+                        {% else %}
+                        <button type="submit" class="btn btn-warning" disabled>Picked Up</button><br>
+                        {% endif %}
+                       
                         </form>
                         
                         <!-- <a href="/upd_order_status" class="btn btn-warning">Picked Up</a> -->
@@ -53,11 +59,18 @@
 
                         <form action="/upd_order_status" method="POST">
                         {% for id in order_id %}
+                        {% if id.status == "PickedUp" or id.status == "Delivered"%}
                         <input type="" name="order_id" value="{{id.id}}">
+                        {% endif %}
                         {% endfor %}
                         <br><br>
-                            <input type="hidden" name="status" value="Delivered">
+                        
+                        <input type="hidden" name="status" value="Delivered">
+                        {% if order_id and order_id[0].status == "PickedUp" %}
                             <button type="submit" class="btn btn-success">Complete Orders</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-success" disabled>Complete Orders</button>
+                        {% endif %}
                         </form>
                         <!-- <a href="/complete_order" class="btn btn-success">Complete Orders</a> -->
                     </div>

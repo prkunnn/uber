@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1>訂單管理</h1>
-<table>
+<table style="width: 800px;">
     <thead>
         <tr>
             <th>訂單 ID</th>
@@ -19,12 +19,22 @@
     <tbody>
         {% for order in orders %}
             <tr>
-                <td>{{ order.order_id }}</td>
+                <td>No. {{ order.order_id }}</td>
                 <td>{{ order.customer_name }}</td>
                 <td>{{ order.delivery_address }}</td>
-                <td>{{ order.total_price }}</td>
+                <td>${{ order.total_price }}</td>
                 <td>{{ order.created_at }}</td>
-                <td>{{ order.status }}</td>
+
+                {% if order.status == 'Pending' %}
+                    <td style="color: red;">{{ order.status }}</td>
+                {% elif order.status == 'In Progress' %}
+                    <td style="color: darkorange;">{{ order.status }}</td>
+                {% elif order.status == 'Ready for Pickup' %}
+                    <td style="color: green;">{{ order.status }}</td>
+                {% else %}
+                    <td>{{ order.status }}</td>
+                {% endif %}
+                    <!-- <td>{{ order.status }}</td> -->
                 <td>
                     {% if order.status == 'Pending' %}
                         <form action="/update_order_status" method="POST" style="display:inline;">
@@ -32,12 +42,13 @@
                             <input type="hidden" name="status" value="In Progress">
                             <button type="submit">確認接單</button>
                         </form>
-                    {% elif order.status == 'In Progress' %}
+                    {% elif order.status == 'In Progress' or order.status == 'Accepted'%}
                         <form action="/update_order_status" method="POST" style="display:inline;">
                             <input type="hidden" name="order_id" value="{{ order.order_id }}">
                             <input type="hidden" name="status" value="Ready for Pickup">
                             <button type="submit">通知取餐</button>
                         </form>
+                    
                     {% else %}
                         已完成
                     {% endif %}
